@@ -3,7 +3,7 @@
   "name": "taskmanager-ui",
   "compatibility_date": "2026-09-22",
   "assets": {
-    "directory": "./dist/taskmanager-ui",
+    "directory": "./dist/taskmanager-ui/browser",
     "not_found_handling": "single-page-application"
   }
 }

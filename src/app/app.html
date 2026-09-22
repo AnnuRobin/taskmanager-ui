@@ -1,0 +1,172 @@
+<div class="app">
+
+  <header class="header">
+    <div>
+      <h1>Task Manager</h1>
+      <p>Organize your work and stay productive.</p>
+    </div>
+
+    <button class="add-button" (click)="openAddForm()">
+      + Add Task
+    </button>
+  </header>
+
+  <main class="content">
+
+    @if (errorMessage) {
+      <div class="error">
+        {{ errorMessage }}
+      </div>
+    }
+
+    <div class="summary">
+      <div class="summary-card">
+        <span>Total Tasks</span>
+        <strong>{{ tasks.length }}</strong>
+      </div>
+
+      <div class="summary-card">
+        <span>Pending</span>
+        <strong>
+          {{ tasks.filter(t => t.status === 'PENDING').length }}
+        </strong>
+      </div>
+
+      <div class="summary-card">
+        <span>Completed</span>
+        <strong>
+          {{ tasks.filter(t => t.status === 'COMPLETED').length }}
+        </strong>
+      </div>
+    </div>
+
+    @if (loading) {
+      <div class="message">
+        Loading tasks...
+      </div>
+    }
+
+    @if (!loading && tasks.length === 0) {
+      <div class="empty">
+        <div class="empty-icon">✓</div>
+        <h2>No tasks yet</h2>
+        <p>Create your first task to get started.</p>
+        <button class="add-button" (click)="openAddForm()">
+          + Create Task
+        </button>
+      </div>
+    }
+
+    @if (!loading && tasks.length > 0) {
+      <div class="task-list">
+
+        @for (task of tasks; track task.id) {
+          <div class="task-card">
+
+            <div class="task-main">
+              <div class="task-title-row">
+                <h2>{{ task.title }}</h2>
+
+                <span
+                  class="priority"
+                  [class.high]="task.priority === 'HIGH'"
+                  [class.medium]="task.priority === 'MEDIUM'"
+                  [class.low]="task.priority === 'LOW'">
+                  {{ task.priority }}
+                </span>
+              </div>
+
+              @if (task.description) {
+                <p class="description">
+                  {{ task.description }}
+                </p>
+              }
+
+              <span
+                class="status"
+                [class.pending]="task.status === 'PENDING'"
+                [class.progress]="task.status === 'IN_PROGRESS'"
+                [class.completed]="task.status === 'COMPLETED'">
+                {{ task.status.replace('_', ' ') }}
+              </span>
+            </div>
+
+            <div class="actions">
+              <button
+                class="edit"
+                (click)="openEditForm(task)">
+                Edit
+              </button>
+
+              <button
+                class="delete"
+                (click)="deleteTask(task.id)">
+                Delete
+              </button>
+            </div>
+
+          </div>
+        }
+
+      </div>
+    }
+
+  </main>
+
+  @if (showForm) {
+    <div class="modal-backdrop" (click)="closeForm()">
+
+      <div class="modal" (click)="$event.stopPropagation()">
+
+        <div class="modal-header">
+          <h2>{{ editingTask ? 'Edit Task' : 'Add Task' }}</h2>
+
+          <button class="close" (click)="closeForm()">×</button>
+        </div>
+
+        <div class="form">
+
+          <label>Title</label>
+          <input
+            type="text"
+            [(ngModel)]="formTask.title"
+            placeholder="Enter task title">
+
+          <label>Description</label>
+          <textarea
+            [(ngModel)]="formTask.description"
+            placeholder="Describe the task">
+          </textarea>
+
+          <label>Status</label>
+          <select [(ngModel)]="formTask.status">
+            <option value="PENDING">Pending</option>
+            <option value="IN_PROGRESS">In Progress</option>
+            <option value="COMPLETED">Completed</option>
+          </select>
+
+          <label>Priority</label>
+          <select [(ngModel)]="formTask.priority">
+            <option value="LOW">Low</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="HIGH">High</option>
+          </select>
+
+          <div class="form-actions">
+            <button class="cancel" (click)="closeForm()">
+              Cancel
+            </button>
+
+            <button class="save" (click)="saveTask()">
+              {{ editingTask ? 'Update Task' : 'Create Task' }}
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  }
+
+</div>
